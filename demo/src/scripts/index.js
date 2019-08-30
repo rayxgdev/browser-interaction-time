@@ -1,25 +1,30 @@
 import BrowserInteractionTime from '../../../dist/browser-interaction-time.umd';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const appendMessageToDom = text => time => {
-    const element = document.createElement('div');
-    element.innerHTML = `<span>${text}: ${time} ms</span>`;
-    document.body.appendChild(element);
-  };
+document.addEventListener( 'DOMContentLoaded', () => {
+  var localKey = 'demoTab';
 
-  var bit = new BrowserInteractionTime({
+  setInterval( () => {
+    document.getElementById( 'activeTime' ).innerHTML = ( parseFloat( BrowserInteractionTime.getActiveTime( localKey ) ) * 0.001 ).toString();
+    document.getElementById( 'idleTime' ).innerHTML = ( parseFloat( BrowserInteractionTime.getIdleTime( localKey ) ) * 0.001 ).toString();
+  }, 1 );
+
+
+  var bit = new BrowserInteractionTime( {
     timeIntervalEllapsedCallbacks: [{
-        timeInMilliseconds: 1000,
-        callback: appendMessageToDom('Timer reached'),
-        multiplier: x => x * 2
+      timeInMilliseconds: 1000,
+      callback: BrowserInteractionTime.storageTime( localKey ),
+      multiplier: x => x
     }],
     absoluteTimeEllapsedCallbacks: [],
-    browserTabInactiveCallbacks: [appendMessageToDom('Tab became inactive')],
-    browserTabActiveCallbacks: [appendMessageToDom('Tab became active')],
+    browserTabInactiveCallbacks: [/*BrowserInteractionTime.toggleActive( localKey, false )*/],
+    browserTabActiveCallbacks: [/*BrowserInteractionTime.toggleActive( localKey, true )*/],
     pauseOnMouseMovement: false,
     pauseOnScroll: false,
-    idleTimeoutMs: 3000
-  });
+    idleTimeoutMs: 3000,
+    times: BrowserInteractionTime.getActiveTime( localKey, BrowserInteractionTime.initTimer ),
+    timesIdle: BrowserInteractionTime.getIdleTime( localKey, BrowserInteractionTime.initTimer ),
+    localKey: localKey
+  } );
 
   bit.startTimer();
-});
+} );

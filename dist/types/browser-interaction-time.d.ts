@@ -1,8 +1,8 @@
 interface BaseTimeEllapsedCallbackData {
-    callback: (timeInMs: number) => void;
+    callback: (timeInMs: number, active: boolean) => void;
     timeInMilliseconds: number;
 }
-declare type BasicCallback = (timeInMs: number) => void;
+declare type BasicCallback = (timeInMs: number, active: boolean) => void;
 export interface TimeIntervalEllapsedCallbackData extends BaseTimeEllapsedCallbackData {
     multiplier: (time: number) => number;
 }
@@ -16,6 +16,11 @@ interface Settings {
     browserTabActiveCallbacks?: BasicCallback[];
     idleTimeoutMs?: number;
     checkCallbacksIntervalMs?: number;
+    times?: [];
+    timesIdle?: [];
+    localKey?: string;
+    sourceUrl?: string;
+    targetUrl?: string;
 }
 interface Mark {
     time: number;
@@ -28,6 +33,7 @@ interface Measure {
 export default class BrowserInteractionTime {
     private running;
     private times;
+    private timesIdle;
     private idle;
     private checkCallbackIntervalId?;
     private currentIdleTimeMs;
@@ -39,7 +45,13 @@ export default class BrowserInteractionTime {
     private absoluteTimeEllapsedCallbacks;
     private marks;
     private measures;
-    constructor({ timeIntervalEllapsedCallbacks, absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs, browserTabInactiveCallbacks, browserTabActiveCallbacks, idleTimeoutMs }: Settings);
+    private localKey;
+    private guidKey;
+    private guid;
+    private sourceUrl;
+    private targetUrl;
+    constructor({ timeIntervalEllapsedCallbacks, absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs, browserTabInactiveCallbacks, browserTabActiveCallbacks, times, timesIdle, localKey, idleTimeoutMs, sourceUrl, targetUrl }: Settings);
+    private generateGuid;
     private onBrowserTabInactive;
     private onBrowserTabActive;
     private onTimePassed;
@@ -47,13 +59,19 @@ export default class BrowserInteractionTime {
     private registerEventListeners;
     private unregisterEventListeners;
     private checkCallbacksOnInterval;
+    private getCurrentGuid;
+    private setCurrentGuid;
+    static getActiveTimesObject(key: string, cb?: Function): any;
+    static getIdleTimesObject(key: string, cb?: Function): any;
     startTimer: () => void;
-    stopTimer: () => void;
+    stopTimer: (stopTimeActive?: boolean) => void;
     addTimeIntervalEllapsedCallback: (timeIntervalEllapsedCallback: TimeIntervalEllapsedCallbackData) => void;
     addAbsoluteTimeEllapsedCallback: (absoluteTimeEllapsedCallback: AbsoluteTimeEllapsedCallbackData) => void;
     addBrowserTabInactiveCallback: (browserTabInactiveCallback: BasicCallback) => void;
     addBrowserTabActiveCallback: (browserTabActiveCallback: BasicCallback) => void;
     getTimeInMilliseconds: () => number;
+    getTimeInMillisecondsOf: (times: any) => number;
+    getIdleTimeInMilliseconds: () => number;
     isRunning: () => boolean;
     reset: () => void;
     destroy: () => void;
@@ -61,5 +79,13 @@ export default class BrowserInteractionTime {
     getMarks(name: string): Mark[] | undefined;
     measure(name: string, startMarkName: string, endMarkName: string): void;
     getMeasures(name: string): Measure[] | undefined;
+    static storageTime: (key: string) => (time: any, active: any) => void;
+    storageTimesObject: (key: string, times: any, active?: boolean) => void;
+    static initTimer(time: string): {
+        start: number;
+        stop: number;
+    }[];
+    static getActiveTime: (key: string, cb?: Function | undefined) => any;
+    static getIdleTime: (key: string, cb?: Function | undefined) => any;
 }
 export {};
