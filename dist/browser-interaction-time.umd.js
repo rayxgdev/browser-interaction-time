@@ -30,549 +30,6 @@
         return __assign.apply(this, arguments);
     };
 
-    /**
-     * Checks if `value` is the
-     * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-     * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-     * @example
-     *
-     * _.isObject({});
-     * // => true
-     *
-     * _.isObject([1, 2, 3]);
-     * // => true
-     *
-     * _.isObject(_.noop);
-     * // => true
-     *
-     * _.isObject(null);
-     * // => false
-     */
-    function isObject(value) {
-      var type = typeof value;
-      return value != null && (type == 'object' || type == 'function');
-    }
-
-    var isObject_1 = isObject;
-
-    var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-    /** Detect free variable `global` from Node.js. */
-    var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
-
-    var _freeGlobal = freeGlobal;
-
-    /** Detect free variable `self`. */
-    var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-    /** Used as a reference to the global object. */
-    var root = _freeGlobal || freeSelf || Function('return this')();
-
-    var _root = root;
-
-    /**
-     * Gets the timestamp of the number of milliseconds that have elapsed since
-     * the Unix epoch (1 January 1970 00:00:00 UTC).
-     *
-     * @static
-     * @memberOf _
-     * @since 2.4.0
-     * @category Date
-     * @returns {number} Returns the timestamp.
-     * @example
-     *
-     * _.defer(function(stamp) {
-     *   console.log(_.now() - stamp);
-     * }, _.now());
-     * // => Logs the number of milliseconds it took for the deferred invocation.
-     */
-    var now = function() {
-      return _root.Date.now();
-    };
-
-    var now_1 = now;
-
-    /** Built-in value references. */
-    var Symbol = _root.Symbol;
-
-    var _Symbol = Symbol;
-
-    /** Used for built-in method references. */
-    var objectProto = Object.prototype;
-
-    /** Used to check objects for own properties. */
-    var hasOwnProperty = objectProto.hasOwnProperty;
-
-    /**
-     * Used to resolve the
-     * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-     * of values.
-     */
-    var nativeObjectToString = objectProto.toString;
-
-    /** Built-in value references. */
-    var symToStringTag = _Symbol ? _Symbol.toStringTag : undefined;
-
-    /**
-     * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
-     *
-     * @private
-     * @param {*} value The value to query.
-     * @returns {string} Returns the raw `toStringTag`.
-     */
-    function getRawTag(value) {
-      var isOwn = hasOwnProperty.call(value, symToStringTag),
-          tag = value[symToStringTag];
-
-      try {
-        value[symToStringTag] = undefined;
-        var unmasked = true;
-      } catch (e) {}
-
-      var result = nativeObjectToString.call(value);
-      if (unmasked) {
-        if (isOwn) {
-          value[symToStringTag] = tag;
-        } else {
-          delete value[symToStringTag];
-        }
-      }
-      return result;
-    }
-
-    var _getRawTag = getRawTag;
-
-    /** Used for built-in method references. */
-    var objectProto$1 = Object.prototype;
-
-    /**
-     * Used to resolve the
-     * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-     * of values.
-     */
-    var nativeObjectToString$1 = objectProto$1.toString;
-
-    /**
-     * Converts `value` to a string using `Object.prototype.toString`.
-     *
-     * @private
-     * @param {*} value The value to convert.
-     * @returns {string} Returns the converted string.
-     */
-    function objectToString(value) {
-      return nativeObjectToString$1.call(value);
-    }
-
-    var _objectToString = objectToString;
-
-    /** `Object#toString` result references. */
-    var nullTag = '[object Null]',
-        undefinedTag = '[object Undefined]';
-
-    /** Built-in value references. */
-    var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
-
-    /**
-     * The base implementation of `getTag` without fallbacks for buggy environments.
-     *
-     * @private
-     * @param {*} value The value to query.
-     * @returns {string} Returns the `toStringTag`.
-     */
-    function baseGetTag(value) {
-      if (value == null) {
-        return value === undefined ? undefinedTag : nullTag;
-      }
-      return (symToStringTag$1 && symToStringTag$1 in Object(value))
-        ? _getRawTag(value)
-        : _objectToString(value);
-    }
-
-    var _baseGetTag = baseGetTag;
-
-    /**
-     * Checks if `value` is object-like. A value is object-like if it's not `null`
-     * and has a `typeof` result of "object".
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-     * @example
-     *
-     * _.isObjectLike({});
-     * // => true
-     *
-     * _.isObjectLike([1, 2, 3]);
-     * // => true
-     *
-     * _.isObjectLike(_.noop);
-     * // => false
-     *
-     * _.isObjectLike(null);
-     * // => false
-     */
-    function isObjectLike(value) {
-      return value != null && typeof value == 'object';
-    }
-
-    var isObjectLike_1 = isObjectLike;
-
-    /** `Object#toString` result references. */
-    var symbolTag = '[object Symbol]';
-
-    /**
-     * Checks if `value` is classified as a `Symbol` primitive or object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
-     * @example
-     *
-     * _.isSymbol(Symbol.iterator);
-     * // => true
-     *
-     * _.isSymbol('abc');
-     * // => false
-     */
-    function isSymbol(value) {
-      return typeof value == 'symbol' ||
-        (isObjectLike_1(value) && _baseGetTag(value) == symbolTag);
-    }
-
-    var isSymbol_1 = isSymbol;
-
-    /** Used as references for various `Number` constants. */
-    var NAN = 0 / 0;
-
-    /** Used to match leading and trailing whitespace. */
-    var reTrim = /^\s+|\s+$/g;
-
-    /** Used to detect bad signed hexadecimal string values. */
-    var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-
-    /** Used to detect binary string values. */
-    var reIsBinary = /^0b[01]+$/i;
-
-    /** Used to detect octal string values. */
-    var reIsOctal = /^0o[0-7]+$/i;
-
-    /** Built-in method references without a dependency on `root`. */
-    var freeParseInt = parseInt;
-
-    /**
-     * Converts `value` to a number.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to process.
-     * @returns {number} Returns the number.
-     * @example
-     *
-     * _.toNumber(3.2);
-     * // => 3.2
-     *
-     * _.toNumber(Number.MIN_VALUE);
-     * // => 5e-324
-     *
-     * _.toNumber(Infinity);
-     * // => Infinity
-     *
-     * _.toNumber('3.2');
-     * // => 3.2
-     */
-    function toNumber(value) {
-      if (typeof value == 'number') {
-        return value;
-      }
-      if (isSymbol_1(value)) {
-        return NAN;
-      }
-      if (isObject_1(value)) {
-        var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-        value = isObject_1(other) ? (other + '') : other;
-      }
-      if (typeof value != 'string') {
-        return value === 0 ? value : +value;
-      }
-      value = value.replace(reTrim, '');
-      var isBinary = reIsBinary.test(value);
-      return (isBinary || reIsOctal.test(value))
-        ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-        : (reIsBadHex.test(value) ? NAN : +value);
-    }
-
-    var toNumber_1 = toNumber;
-
-    /** Error message constants. */
-    var FUNC_ERROR_TEXT = 'Expected a function';
-
-    /* Built-in method references for those with the same name as other `lodash` methods. */
-    var nativeMax = Math.max,
-        nativeMin = Math.min;
-
-    /**
-     * Creates a debounced function that delays invoking `func` until after `wait`
-     * milliseconds have elapsed since the last time the debounced function was
-     * invoked. The debounced function comes with a `cancel` method to cancel
-     * delayed `func` invocations and a `flush` method to immediately invoke them.
-     * Provide `options` to indicate whether `func` should be invoked on the
-     * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
-     * with the last arguments provided to the debounced function. Subsequent
-     * calls to the debounced function return the result of the last `func`
-     * invocation.
-     *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is
-     * invoked on the trailing edge of the timeout only if the debounced function
-     * is invoked more than once during the `wait` timeout.
-     *
-     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
-     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
-     *
-     * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
-     * for details over the differences between `_.debounce` and `_.throttle`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to debounce.
-     * @param {number} [wait=0] The number of milliseconds to delay.
-     * @param {Object} [options={}] The options object.
-     * @param {boolean} [options.leading=false]
-     *  Specify invoking on the leading edge of the timeout.
-     * @param {number} [options.maxWait]
-     *  The maximum time `func` is allowed to be delayed before it's invoked.
-     * @param {boolean} [options.trailing=true]
-     *  Specify invoking on the trailing edge of the timeout.
-     * @returns {Function} Returns the new debounced function.
-     * @example
-     *
-     * // Avoid costly calculations while the window size is in flux.
-     * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
-     *
-     * // Invoke `sendMail` when clicked, debouncing subsequent calls.
-     * jQuery(element).on('click', _.debounce(sendMail, 300, {
-     *   'leading': true,
-     *   'trailing': false
-     * }));
-     *
-     * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
-     * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
-     * var source = new EventSource('/stream');
-     * jQuery(source).on('message', debounced);
-     *
-     * // Cancel the trailing debounced invocation.
-     * jQuery(window).on('popstate', debounced.cancel);
-     */
-    function debounce(func, wait, options) {
-      var lastArgs,
-          lastThis,
-          maxWait,
-          result,
-          timerId,
-          lastCallTime,
-          lastInvokeTime = 0,
-          leading = false,
-          maxing = false,
-          trailing = true;
-
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      wait = toNumber_1(wait) || 0;
-      if (isObject_1(options)) {
-        leading = !!options.leading;
-        maxing = 'maxWait' in options;
-        maxWait = maxing ? nativeMax(toNumber_1(options.maxWait) || 0, wait) : maxWait;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
-      }
-
-      function invokeFunc(time) {
-        var args = lastArgs,
-            thisArg = lastThis;
-
-        lastArgs = lastThis = undefined;
-        lastInvokeTime = time;
-        result = func.apply(thisArg, args);
-        return result;
-      }
-
-      function leadingEdge(time) {
-        // Reset any `maxWait` timer.
-        lastInvokeTime = time;
-        // Start the timer for the trailing edge.
-        timerId = setTimeout(timerExpired, wait);
-        // Invoke the leading edge.
-        return leading ? invokeFunc(time) : result;
-      }
-
-      function remainingWait(time) {
-        var timeSinceLastCall = time - lastCallTime,
-            timeSinceLastInvoke = time - lastInvokeTime,
-            timeWaiting = wait - timeSinceLastCall;
-
-        return maxing
-          ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
-          : timeWaiting;
-      }
-
-      function shouldInvoke(time) {
-        var timeSinceLastCall = time - lastCallTime,
-            timeSinceLastInvoke = time - lastInvokeTime;
-
-        // Either this is the first call, activity has stopped and we're at the
-        // trailing edge, the system time has gone backwards and we're treating
-        // it as the trailing edge, or we've hit the `maxWait` limit.
-        return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
-          (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
-      }
-
-      function timerExpired() {
-        var time = now_1();
-        if (shouldInvoke(time)) {
-          return trailingEdge(time);
-        }
-        // Restart the timer.
-        timerId = setTimeout(timerExpired, remainingWait(time));
-      }
-
-      function trailingEdge(time) {
-        timerId = undefined;
-
-        // Only invoke if we have `lastArgs` which means `func` has been
-        // debounced at least once.
-        if (trailing && lastArgs) {
-          return invokeFunc(time);
-        }
-        lastArgs = lastThis = undefined;
-        return result;
-      }
-
-      function cancel() {
-        if (timerId !== undefined) {
-          clearTimeout(timerId);
-        }
-        lastInvokeTime = 0;
-        lastArgs = lastCallTime = lastThis = timerId = undefined;
-      }
-
-      function flush() {
-        return timerId === undefined ? result : trailingEdge(now_1());
-      }
-
-      function debounced() {
-        var time = now_1(),
-            isInvoking = shouldInvoke(time);
-
-        lastArgs = arguments;
-        lastThis = this;
-        lastCallTime = time;
-
-        if (isInvoking) {
-          if (timerId === undefined) {
-            return leadingEdge(lastCallTime);
-          }
-          if (maxing) {
-            // Handle invocations in a tight loop.
-            clearTimeout(timerId);
-            timerId = setTimeout(timerExpired, wait);
-            return invokeFunc(lastCallTime);
-          }
-        }
-        if (timerId === undefined) {
-          timerId = setTimeout(timerExpired, wait);
-        }
-        return result;
-      }
-      debounced.cancel = cancel;
-      debounced.flush = flush;
-      return debounced;
-    }
-
-    var debounce_1 = debounce;
-
-    /** Error message constants. */
-    var FUNC_ERROR_TEXT$1 = 'Expected a function';
-
-    /**
-     * Creates a throttled function that only invokes `func` at most once per
-     * every `wait` milliseconds. The throttled function comes with a `cancel`
-     * method to cancel delayed `func` invocations and a `flush` method to
-     * immediately invoke them. Provide `options` to indicate whether `func`
-     * should be invoked on the leading and/or trailing edge of the `wait`
-     * timeout. The `func` is invoked with the last arguments provided to the
-     * throttled function. Subsequent calls to the throttled function return the
-     * result of the last `func` invocation.
-     *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is
-     * invoked on the trailing edge of the timeout only if the throttled function
-     * is invoked more than once during the `wait` timeout.
-     *
-     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
-     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
-     *
-     * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
-     * for details over the differences between `_.throttle` and `_.debounce`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to throttle.
-     * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
-     * @param {Object} [options={}] The options object.
-     * @param {boolean} [options.leading=true]
-     *  Specify invoking on the leading edge of the timeout.
-     * @param {boolean} [options.trailing=true]
-     *  Specify invoking on the trailing edge of the timeout.
-     * @returns {Function} Returns the new throttled function.
-     * @example
-     *
-     * // Avoid excessively updating the position while scrolling.
-     * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
-     *
-     * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
-     * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
-     * jQuery(element).on('click', throttled);
-     *
-     * // Cancel the trailing throttled invocation.
-     * jQuery(window).on('popstate', throttled.cancel);
-     */
-    function throttle(func, wait, options) {
-      var leading = true,
-          trailing = true;
-
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT$1);
-      }
-      if (isObject_1(options)) {
-        leading = 'leading' in options ? !!options.leading : leading;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
-      }
-      return debounce_1(func, wait, {
-        'leading': leading,
-        'maxWait': wait,
-        'trailing': trailing
-      });
-    }
-
-    var throttle_1 = throttle;
-
     var windowIdleEvents = ['scroll', 'resize'];
     var documentIdleEvents = [
         'wheel',
@@ -588,47 +45,93 @@
     var BrowserInteractionTime = /** @class */ (function () {
         function BrowserInteractionTime(_a) {
             var _this = this;
-            var timeIntervalEllapsedCallbacks = _a.timeIntervalEllapsedCallbacks, absoluteTimeEllapsedCallbacks = _a.absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs = _a.checkCallbacksIntervalMs, browserTabInactiveCallbacks = _a.browserTabInactiveCallbacks, browserTabActiveCallbacks = _a.browserTabActiveCallbacks, idleTimeoutMs = _a.idleTimeoutMs;
+            var timeIntervalEllapsedCallbacks = _a.timeIntervalEllapsedCallbacks, absoluteTimeEllapsedCallbacks = _a.absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs = _a.checkCallbacksIntervalMs, browserTabInactiveCallbacks = _a.browserTabInactiveCallbacks, browserTabActiveCallbacks = _a.browserTabActiveCallbacks, times = _a.times, timesIdle = _a.timesIdle, localKey = _a.localKey, idleTimeoutMs = _a.idleTimeoutMs, sourceUrl = _a.sourceUrl, targetUrl = _a.targetUrl;
+            this.generateGuid = function () {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    /*eslint-disable*/
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    /*eslint-enable*/
+                    return v.toString(16);
+                });
+            };
             this.onBrowserTabInactive = function (event) {
                 // if running pause timer
                 if (_this.isRunning()) {
                     _this.stopTimer();
                 }
                 _this.browserTabInactiveCallbacks.forEach(function (fn) {
-                    return fn(_this.getTimeInMilliseconds());
+                    return fn(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getIdleTimesObject(_this.localKey)), false);
                 });
             };
             this.onBrowserTabActive = function (event) {
-                // if not running start timer
-                if (!_this.isRunning()) {
-                    _this.startTimer();
-                }
-                _this.browserTabActiveCallbacks.forEach(function (fn) {
-                    return fn(_this.getTimeInMilliseconds());
-                });
+                setTimeout(function () {
+                    // if not running start timer
+                    if (!_this.isRunning()) {
+                        _this.running = true;
+                        if (_this.getCurrentGuid() !== _this.guid) {
+                            _this.setCurrentGuid();
+                            _this.timesIdle = BrowserInteractionTime.getIdleTimesObject(_this.localKey, function (times) { return JSON.parse(times); });
+                            _this.timesIdle[_this.timesIdle.length - 1].stop = _this.timesIdle[_this.timesIdle.length - 1].start;
+                            _this.stopTimer(false);
+                        }
+                        _this.startTimer();
+                    }
+                    else if (_this.isRunning() && _this.guid !== _this.getCurrentGuid()) {
+                        _this.setCurrentGuid();
+                        _this.timesIdle = BrowserInteractionTime.getIdleTimesObject(_this.localKey, function (times) { return JSON.parse(times); });
+                        _this.startTimer();
+                    }
+                    _this.browserTabActiveCallbacks.forEach(function (fn) {
+                        fn(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey)), true);
+                    });
+                }, 100);
             };
             this.onTimePassed = function () {
-                // check all callbacks time and if passed execute callback
-                _this.absoluteTimeEllapsedCallbacks.forEach(function (_a, index) {
-                    var callback = _a.callback, pending = _a.pending, timeInMilliseconds = _a.timeInMilliseconds;
-                    if (pending && timeInMilliseconds <= _this.getTimeInMilliseconds()) {
-                        callback(_this.getTimeInMilliseconds());
-                        _this.absoluteTimeEllapsedCallbacks[index].pending = false;
-                    }
-                });
-                _this.timeIntervalEllapsedCallbacks.forEach(function (_a, index) {
-                    var callback = _a.callback, timeInMilliseconds = _a.timeInMilliseconds, multiplier = _a.multiplier;
-                    if (timeInMilliseconds <= _this.getTimeInMilliseconds()) {
-                        callback(_this.getTimeInMilliseconds());
-                        _this.timeIntervalEllapsedCallbacks[index].timeInMilliseconds = multiplier(timeInMilliseconds);
-                    }
-                });
-                if (_this.currentIdleTimeMs >= _this.idleTimeoutMs && _this.isRunning()) {
-                    _this.idle = true;
-                    _this.stopTimer();
+                var timesActiveStoraged = BrowserInteractionTime.getActiveTimesObject(_this.localKey);
+                var timesIdleStoraged = BrowserInteractionTime.getIdleTimesObject(_this.localKey);
+                if (timesActiveStoraged == null) {
+                    _this.storageTimesObject(_this.localKey, _this.times, true);
                 }
-                else {
-                    _this.currentIdleTimeMs += _this.checkCallbacksIntervalMs;
+                if (timesIdleStoraged == null) {
+                    _this.storageTimesObject(_this.localKey, _this.timesIdle, false);
+                }
+                if (_this.guid !== _this.getCurrentGuid()) {
+                    _this.times = BrowserInteractionTime.getActiveTimesObject(_this.localKey, function (time) { return JSON.parse(time); });
+                    _this.timesIdle = BrowserInteractionTime.getIdleTimesObject(_this.localKey, function (timeIdle) { return JSON.parse(timeIdle); });
+                }
+                // check all callbacks time and if passed execute callback
+                if (_this.getCurrentGuid() == _this.guid) {
+                    _this.absoluteTimeEllapsedCallbacks.forEach(function (_a, index) {
+                        var callback = _a.callback, pending = _a.pending, timeInMilliseconds = _a.timeInMilliseconds;
+                        if (pending && timeInMilliseconds <= _this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey))) {
+                            if (!_this.running) {
+                                callback(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getIdleTimesObject(_this.localKey)), false);
+                            }
+                            else {
+                                callback(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey)), true);
+                            }
+                            _this.absoluteTimeEllapsedCallbacks[index].pending = false;
+                        }
+                    });
+                    _this.timeIntervalEllapsedCallbacks.forEach(function (_a, index) {
+                        var callback = _a.callback, timeInMilliseconds = _a.timeInMilliseconds, multiplier = _a.multiplier;
+                        if (timeInMilliseconds <= _this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey))) {
+                            if (!_this.running) {
+                                callback(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getIdleTimesObject(_this.localKey)), false);
+                            }
+                            else if (_this.running && !_this.idle) {
+                                callback(_this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey)), true);
+                            }
+                            _this.timeIntervalEllapsedCallbacks[index].timeInMilliseconds = multiplier(timeInMilliseconds);
+                        }
+                    });
+                    if (_this.currentIdleTimeMs >= _this.idleTimeoutMs && _this.isRunning()) {
+                        _this.idle = true;
+                        _this.stopTimer();
+                    }
+                    else {
+                        _this.currentIdleTimeMs += _this.checkCallbacksIntervalMs;
+                    }
                 }
             };
             this.resetIdleTime = function () {
@@ -642,11 +145,13 @@
                 var documentListenerOptions = { passive: true };
                 var windowListenerOptions = __assign({}, documentListenerOptions, { capture: true });
                 window.addEventListener('blur', _this.onBrowserTabInactive, windowListenerOptions);
+                window.addEventListener('focusout', _this.onBrowserTabInactive, windowListenerOptions);
                 window.addEventListener('focus', _this.onBrowserTabActive, windowListenerOptions);
-                var throttleResetIdleTime = throttle_1(_this.resetIdleTime, 2000, {
-                    leading: true,
-                    trailing: false
-                });
+                window.addEventListener('beforeunload', function (e) {
+                    e.preventDefault();
+                    console.log(_this.guid + ' <-- ADIOS');
+                }, windowListenerOptions);
+                var throttleResetIdleTime = function () { return setTimeout(_this.resetIdleTime, 100); };
                 windowIdleEvents.forEach(function (event) {
                     window.addEventListener(event, throttleResetIdleTime, windowListenerOptions);
                 });
@@ -669,7 +174,13 @@
                     _this.onTimePassed();
                 }, _this.checkCallbacksIntervalMs);
             };
+            this.getCurrentGuid = function () {
+                return localStorage.getItem(_this.guidKey);
+            };
             this.startTimer = function () {
+                if (!_this.isRunning() && _this.guid == _this.getCurrentGuid()) {
+                    _this.running = true;
+                }
                 if (!_this.checkCallbackIntervalId) {
                     _this.checkCallbacksOnInterval();
                 }
@@ -677,18 +188,40 @@
                 if (last && last.stop === null) {
                     return;
                 }
+                if (_this.timesIdle.length > 1) {
+                    if (performance.now() < _this.timesIdle[_this.timesIdle.length - 1].start) {
+                        _this.timesIdle[_this.timesIdle.length - 1].stop = _this.timesIdle[_this.timesIdle.length - 1].start;
+                    }
+                    else {
+                        _this.timesIdle[_this.timesIdle.length - 1].stop = performance.now();
+                    }
+                    _this.storageTimesObject(_this.localKey, _this.timesIdle, false);
+                }
                 _this.times.push({
                     start: performance.now(),
                     stop: null
                 });
-                _this.running = true;
+                _this.storageTimesObject(_this.localKey, _this.times, true);
             };
-            this.stopTimer = function () {
+            this.stopTimer = function (stopTimeActive) {
+                if (stopTimeActive === void 0) { stopTimeActive = true; }
                 if (!_this.times.length) {
                     return;
                 }
-                _this.times[_this.times.length - 1].stop = performance.now();
                 _this.running = false;
+                var last = _this.timesIdle[_this.timesIdle.length - 1];
+                if (last && last.stop === null) {
+                    return;
+                }
+                if (stopTimeActive) {
+                    _this.times[_this.times.length - 1].stop = performance.now();
+                    _this.storageTimesObject(_this.localKey, _this.times, true);
+                }
+                _this.timesIdle.push({
+                    start: performance.now(),
+                    stop: null
+                });
+                _this.storageTimesObject(_this.localKey, _this.timesIdle, false);
             };
             this.addTimeIntervalEllapsedCallback = function (timeIntervalEllapsedCallback) {
                 _this.timeIntervalEllapsedCallbacks.push(timeIntervalEllapsedCallback);
@@ -713,6 +246,28 @@
                     return acc;
                 }, 0);
             };
+            this.getTimeInMillisecondsOf = function (times) {
+                return JSON.parse(times).reduce(function (acc, current) {
+                    if (current.stop) {
+                        acc = acc + (current.stop - current.start);
+                    }
+                    else {
+                        acc = acc + (performance.now() - current.start);
+                    }
+                    return acc;
+                }, 0);
+            };
+            this.getIdleTimeInMilliseconds = function () {
+                return _this.timesIdle.reduce(function (acc, current) {
+                    if (current.stop) {
+                        acc = acc + (current.stop - current.start);
+                    }
+                    else {
+                        acc = acc + (performance.now() - current.start);
+                    }
+                    return acc;
+                }, 0);
+            };
             this.isRunning = function () {
                 return _this.running;
             };
@@ -725,8 +280,18 @@
                     window.clearInterval(_this.checkCallbackIntervalId);
                 }
             };
+            this.storageTimesObject = function (key, times, active) {
+                if (active === void 0) { active = true; }
+                if (active) {
+                    localStorage.setItem('browserTimeActiveObject-' + key, JSON.stringify(times));
+                }
+                else if (!active) {
+                    localStorage.setItem('browserTimeIdleObject-' + key, JSON.stringify(times));
+                }
+            };
             this.running = false;
-            this.times = [];
+            this.times = times || [];
+            this.timesIdle = timesIdle || [];
             this.idle = false;
             this.currentIdleTimeMs = 0;
             this.marks = {};
@@ -734,16 +299,43 @@
             this.browserTabActiveCallbacks = browserTabActiveCallbacks || [];
             this.browserTabInactiveCallbacks = browserTabInactiveCallbacks || [];
             this.checkCallbacksIntervalMs = checkCallbacksIntervalMs || 100;
-            this.idleTimeoutMs = idleTimeoutMs || 3000; // 3s
+            this.idleTimeoutMs = idleTimeoutMs || 3000; // 3s;
             this.timeIntervalEllapsedCallbacks = timeIntervalEllapsedCallbacks || [];
             this.absoluteTimeEllapsedCallbacks = absoluteTimeEllapsedCallbacks || [];
+            this.localKey = localKey || 'XXXX';
+            this.guidKey = 'browserTabGuid-' + this.localKey;
+            this.guid = this.generateGuid();
+            this.sourceUrl = sourceUrl || false;
+            this.targetUrl = targetUrl || false;
             this.registerEventListeners();
+            this.setCurrentGuid();
         }
+        BrowserInteractionTime.prototype.setCurrentGuid = function () {
+            localStorage.setItem(this.guidKey, this.guid);
+        };
+        BrowserInteractionTime.getActiveTimesObject = function (key, cb) {
+            var activeTime = localStorage.getItem('browserTimeActiveObject-' + key);
+            if (cb) {
+                return cb(activeTime);
+            }
+            else {
+                return activeTime;
+            }
+        };
+        BrowserInteractionTime.getIdleTimesObject = function (key, cb) {
+            var idleTime = localStorage.getItem('browserTimeIdleObject-' + key);
+            if (cb) {
+                return cb(idleTime);
+            }
+            else {
+                return idleTime;
+            }
+        };
         BrowserInteractionTime.prototype.mark = function (key) {
             if (!this.marks[key]) {
                 this.marks[key] = [];
             }
-            this.marks[key].push({ time: this.getTimeInMilliseconds() });
+            this.marks[key].push({ time: this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(this.localKey)) });
         };
         BrowserInteractionTime.prototype.getMarks = function (name) {
             if (this.marks[name].length < 1) {
@@ -771,8 +363,41 @@
             }
             return this.measures[name];
         };
+        BrowserInteractionTime.initTimer = function (time) {
+            return time == null ? [] : [{
+                    start: performance.now(),
+                    stop: (parseFloat(time))
+                }];
+        };
+        BrowserInteractionTime.storageTime = function (key) { return function (time, active) {
+            if (active) {
+                localStorage.setItem('browserTimeActive-' + key, (time).toString());
+            }
+            else if (!active) {
+                localStorage.setItem('browserTimeIdle-' + key, (time).toString());
+            }
+        }; };
+        BrowserInteractionTime.getActiveTime = function (key, cb) {
+            var activeTime = localStorage.getItem('browserTimeActive-' + key);
+            if (cb) {
+                return cb(activeTime);
+            }
+            else {
+                return activeTime;
+            }
+        };
+        BrowserInteractionTime.getIdleTime = function (key, cb) {
+            var idleTime = localStorage.getItem('browserTimeIdle-' + key);
+            if (cb) {
+                return cb(idleTime);
+            }
+            else {
+                return idleTime;
+            }
+        };
         return BrowserInteractionTime;
     }());
+    //# sourceMappingURL=browser-interaction-time.js.map
 
     return BrowserInteractionTime;
 
