@@ -3,10 +3,32 @@ interface BaseTimeEllapsedCallbackData {
   timeInMilliseconds: number
 }
 
+interface RemoteCallBackData {
+  method?: string,
+  customUrl?: string,
+  data?: any
+}
+
+interface RemoteServiceData {
+  data: { service?: string, id?: number },
+  response: { active: string, idle: string },
+  customUrl?: string
+}
+interface RemoteTimeCallbackData {
+  callbackData?: {},
+  timeInMilliseconds: number,
+  timeout: number
+}
+
 type BasicCallback = (timeInMs: number, active: boolean) => void
 
 export interface TimeIntervalEllapsedCallbackData
   extends BaseTimeEllapsedCallbackData {
+  multiplier: (time: number) => number
+}
+
+export interface TimeIntervalRemoteCallback
+  extends RemoteTimeCallbackData {
   multiplier: (time: number) => number
 }
 
@@ -16,17 +38,19 @@ export interface AbsoluteTimeEllapsedCallbackData
 }
 
 interface Settings {
-  timeIntervalEllapsedCallbacks?: TimeIntervalEllapsedCallbackData[]
-  absoluteTimeEllapsedCallbacks?: AbsoluteTimeEllapsedCallbackData[]
-  browserTabInactiveCallbacks?: BasicCallback[]
-  browserTabActiveCallbacks?: BasicCallback[]
-  idleTimeoutMs?: number
+  timeIntervalEllapsedCallbacks?: TimeIntervalEllapsedCallbackData[],
+  timeIntervalRemoteCallback?: TimeIntervalRemoteCallback[],
+  absoluteTimeEllapsedCallbacks?: AbsoluteTimeEllapsedCallbackData[],
+  browserTabInactiveCallbacks?: BasicCallback[],
+  browserTabActiveCallbacks?: BasicCallback[],
+  idleTimeoutMs?: number,
   checkCallbacksIntervalMs?: number,
   times?: [],
   timesIdle?: [],
   localKey?: string,
   sourceUrl?: string,
-  targetUrl?: string
+  targetUrl?: string,
+  service?: RemoteServiceData
 }
 interface Times {
   start: number
@@ -72,10 +96,12 @@ export default class BrowserInteractionTime {
   private currentIdleTimeMs: number;
 
   private idleTimeoutMs: number;
+  private remoteTimeout: number;
   private checkCallbacksIntervalMs: number;
   private browserTabActiveCallbacks: BasicCallback[];
   private browserTabInactiveCallbacks: BasicCallback[];
   private timeIntervalEllapsedCallbacks: TimeIntervalEllapsedCallbackData[];
+  private timeIntervalRemoteCallback: TimeIntervalRemoteCallback[];
   private absoluteTimeEllapsedCallbacks: AbsoluteTimeEllapsedCallbackData[];
   private marks: Marks;
   private measures: Measures;
@@ -84,9 +110,11 @@ export default class BrowserInteractionTime {
   private guid: string;
   private sourceUrl: string | boolean;
   private targetUrl: string | boolean;
+  private serviceData: RemoteServiceData | boolean;
 
   constructor({
     timeIntervalEllapsedCallbacks,
+    timeIntervalRemoteCallback,
     absoluteTimeEllapsedCallbacks,
     checkCallbacksIntervalMs,
     browserTabInactiveCallbacks,
@@ -96,7 +124,8 @@ export default class BrowserInteractionTime {
     localKey,
     idleTimeoutMs,
     sourceUrl,
-    targetUrl
+    targetUrl,
+    service,
   }: Settings) {
     this.running = false;
     this.times = times || [];
@@ -109,16 +138,53 @@ export default class BrowserInteractionTime {
     this.browserTabInactiveCallbacks = browserTabInactiveCallbacks || [];
     this.checkCallbacksIntervalMs = checkCallbacksIntervalMs || 100;
     this.idleTimeoutMs = idleTimeoutMs || 3000 // 3s;
+    this.remoteTimeout = 0;
     this.timeIntervalEllapsedCallbacks = timeIntervalEllapsedCallbacks || [];
+    this.timeIntervalRemoteCallback = timeIntervalRemoteCallback || [];
     this.absoluteTimeEllapsedCallbacks = absoluteTimeEllapsedCallbacks || [];
     this.localKey = localKey || 'XXXX';
     this.guidKey = 'browserTabGuid-' + this.localKey;
     this.guid = this.generateGuid();
     this.sourceUrl = sourceUrl || false;
     this.targetUrl = targetUrl || false;
+    this.serviceData = service || false;
+    console.log(this.serviceData);
 
     this.registerEventListeners();
     this.setCurrentGuid();
+  }
+
+  private initTimers = async () => {
+    let activeTime = BrowserInteractionTime.getActiveTime(this.localKey);
+    let idleTime = BrowserInteractionTime.getIdleTime(this.localKey);
+    let responseActiveTime = 0;
+    let responseIdleTime = 0;
+    if (!this.serviceData) {
+      console.error('You cannot use function remoteCallBack() without declare service at BrowserInteractionTime constructor\'s');
+    } else {
+      let extraData = typeof (<RemoteServiceData>this.serviceData).customUrl === 'string' ? { customUrl: (<RemoteServiceData>this.serviceData).customUrl } : {}
+      await this.remoteCallback({ method: 'GET', ...extraData })
+        .then((res: any) => {
+          let responseData = res.data;
+          if (responseData) {
+            if (responseData.hasOwnProperty((<RemoteServiceData>this.serviceData).response.active)) {
+              responseActiveTime = responseData[(<RemoteServiceData>this.serviceData).response.active];
+            }
+            if (responseData.hasOwnProperty((<RemoteServiceData>this.serviceData).response.idle)) {
+              responseIdleTime = responseData[(<RemoteServiceData>this.serviceData).response.idle];
+            }
+
+            let finalActiveTime = activeTime > this.getTimeInMilliseconds() ? (activeTime > responseActiveTime ? activeTime : responseActiveTime) : (this.getTimeInMilliseconds() > responseActiveTime ? this.getTimeInMilliseconds() : responseActiveTime);
+            this.times = BrowserInteractionTime.initTimer(finalActiveTime);
+            this.storageTimesObject(this.localKey, this.times, true);
+            let finalIdleTime = idleTime > this.getIdleTimeInMilliseconds() ? (idleTime > responseIdleTime ? idleTime : responseIdleTime) : (this.getIdleTimeInMilliseconds() > responseIdleTime ? this.getIdleTimeInMilliseconds() : responseIdleTime);
+            this.timesIdle = BrowserInteractionTime.initTimer(finalIdleTime);
+            this.storageTimesObject(this.localKey, this.timesIdle, false);
+          } else {
+
+          }
+        })
+    }
   }
 
   private generateGuid = () => {
@@ -213,6 +279,23 @@ export default class BrowserInteractionTime {
         }
       )
 
+      this.timeIntervalRemoteCallback.forEach(
+        ({ callbackData, timeInMilliseconds, multiplier, timeout }, index) => {
+          if (timeInMilliseconds >= timeout) {
+            if (!this.serviceData) {
+              console.error('You cannot use function remoteCallBack() without declare service at BrowserInteractionTime constructor\'s');
+              this.timeIntervalRemoteCallback[index].timeout = Infinity; // Set timeout to Infinity to stop fetchService
+            } else {
+              this.remoteCallback(<RemoteCallBackData>callbackData);
+              this.timeIntervalRemoteCallback[index].timeInMilliseconds = 0;
+            }
+          } else {
+            this.timeIntervalRemoteCallback[index].timeInMilliseconds = multiplier(timeInMilliseconds);
+          }
+
+        }
+      )
+
       if (this.currentIdleTimeMs >= this.idleTimeoutMs && this.isRunning()) {
         this.idle = true;
         this.stopTimer();
@@ -220,6 +303,42 @@ export default class BrowserInteractionTime {
         this.currentIdleTimeMs += this.checkCallbacksIntervalMs;
       }
     }
+  }
+
+  private remoteCallback = (data: RemoteCallBackData) => {
+    console.log(data);
+    return new Promise((resolve, reject) => {
+      let hasCustomUrl: boolean = data.hasOwnProperty('customUrl') && ['undefined', 'boolean'].indexOf(typeof data.customUrl) === -1;
+      let method: string = data.hasOwnProperty('method') ? <string>data.method : 'GET';
+      let timesObject = {
+        timeActive: this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(this.localKey)),
+        timeIdle: this.getTimeInMillisecondsOf(BrowserInteractionTime.getIdleTimesObject(this.localKey))
+      };
+      let dataToSend: any = { ...(<RemoteServiceData>this.serviceData).data, ...timesObject };
+      if (data.hasOwnProperty('data')) {
+        dataToSend = { ...dataToSend, ...data.data };
+      }
+      if (hasCustomUrl || this.targetUrl || this.sourceUrl) {
+        let request: RequestInit = {
+          method: method
+        };
+        let url = hasCustomUrl ? <string>data.customUrl : (method == 'GET' && this.sourceUrl ? <string>this.sourceUrl : <string>this.targetUrl);
+        if (method === 'GET') {
+          let params = url.indexOf('?') !== -1 ? '&' : '?';
+          Object.keys(dataToSend).forEach(dataKey => {
+            params += dataKey + '=' + dataToSend[dataKey] + '&';
+          });
+          url += params.slice(0, params.length - 1);
+        } else {
+          request.body = JSON.stringify(dataToSend);
+        }
+
+        fetch(url, request)
+          .then(res => resolve(res.json()));
+      } else {
+        resolve(false);
+      }
+    });
   }
 
   private resetIdleTime = () => {
@@ -410,6 +529,9 @@ export default class BrowserInteractionTime {
   }
 
   public getTimeInMillisecondsOf = (times: any): number => {
+    if (times == null) {
+      times = '[{}]';
+    }
     return JSON.parse(times).reduce((acc: any, current: any) => {
       if (current.stop) {
         acc = acc + (current.stop - current.start)
