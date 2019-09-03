@@ -12,7 +12,7 @@
   "author": "rayxgdev <manuelrodriguezgil@informaticos.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rayxgdev/browser-interaction-time"
+    "url": "https://github.com/rayxgdev/browser-interaction-time-local-storage"
   },
   "license": "MIT",
   "engines": {
