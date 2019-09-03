@@ -527,7 +527,6 @@ var BrowserInteractionTime = /** @class */ (function () {
     };
     return BrowserInteractionTime;
 }());
-//# sourceMappingURL=browser-interaction-time.js.map
 
 export default BrowserInteractionTime;
 //# sourceMappingURL=browser-interaction-time.es5.js.map
