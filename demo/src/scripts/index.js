@@ -1,7 +1,7 @@
 import BrowserInteractionTime from '../../../dist/browser-interaction-time.umd';
 
 document.addEventListener( 'DOMContentLoaded', () => {
-  var localKey = 'demoTabbbvvvvbbbv';
+  var localKey = 'demoTab';
 
   setInterval( () => {
     document.getElementById( 'activeTime' ).innerHTML = ( msToTime( BrowserInteractionTime.getActiveTime( localKey ) ) ).toString();
