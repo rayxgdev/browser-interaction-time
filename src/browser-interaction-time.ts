@@ -148,7 +148,6 @@ export default class BrowserInteractionTime {
     this.sourceUrl = sourceUrl || false;
     this.targetUrl = targetUrl || false;
     this.serviceData = service || false;
-    console.log(this.serviceData);
 
     this.registerEventListeners();
     this.setCurrentGuid();
@@ -306,7 +305,6 @@ export default class BrowserInteractionTime {
   }
 
   private remoteCallback = (data: RemoteCallBackData) => {
-    console.log(data);
     return new Promise((resolve, reject) => {
       let hasCustomUrl: boolean = data.hasOwnProperty('customUrl') && ['undefined', 'boolean'].indexOf(typeof data.customUrl) === -1;
       let method: string = data.hasOwnProperty('method') ? <string>data.method : 'GET';
@@ -372,7 +370,6 @@ export default class BrowserInteractionTime {
       'beforeunload',
       (e) => {
         e.preventDefault();
-        console.log(this.guid + ' <-- ADIOS')
       },
       windowListenerOptions
     )

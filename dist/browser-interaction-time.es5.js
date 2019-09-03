@@ -222,7 +222,6 @@ var BrowserInteractionTime = /** @class */ (function () {
             }
         };
         this.remoteCallback = function (data) {
-            console.log(data);
             return new Promise(function (resolve, reject) {
                 var hasCustomUrl = data.hasOwnProperty('customUrl') && ['undefined', 'boolean'].indexOf(typeof data.customUrl) === -1;
                 var method = data.hasOwnProperty('method') ? data.method : 'GET';
@@ -272,7 +271,6 @@ var BrowserInteractionTime = /** @class */ (function () {
             window.addEventListener('focus', _this.onBrowserTabActive, windowListenerOptions);
             window.addEventListener('beforeunload', function (e) {
                 e.preventDefault();
-                console.log(_this.guid + ' <-- ADIOS');
             }, windowListenerOptions);
             var throttleResetIdleTime = function () { return setTimeout(_this.resetIdleTime, 100); };
             windowIdleEvents.forEach(function (event) {
@@ -436,7 +434,6 @@ var BrowserInteractionTime = /** @class */ (function () {
         this.sourceUrl = sourceUrl || false;
         this.targetUrl = targetUrl || false;
         this.serviceData = service || false;
-        console.log(this.serviceData);
         this.registerEventListeners();
         this.setCurrentGuid();
     }
