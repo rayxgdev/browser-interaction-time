@@ -37,7 +37,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
       timeInMilliseconds: 0,
       callbackData: { method: 'POST' },
       multiplier: x => x + 100,
-      timeout: 5000
+      timeout: 15000
     }],
     absoluteTimeEllapsedCallbacks: [],
     browserTabInactiveCallbacks: [],

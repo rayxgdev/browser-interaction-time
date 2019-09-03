@@ -107,7 +107,7 @@ export default class BrowserInteractionTime {
     getMeasures(name: string): Measure[] | undefined;
     static storageTime: (key: string) => (time: any, active: any) => void;
     storageTimesObject: (key: string, times: any, active?: boolean) => void;
-    static initTimer(time: string): {
+    static initTimer(time: string | null): {
         start: number;
         stop: number;
     }[];

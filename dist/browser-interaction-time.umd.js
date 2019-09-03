@@ -84,7 +84,7 @@
             var _this = this;
             var timeIntervalEllapsedCallbacks = _a.timeIntervalEllapsedCallbacks, timeIntervalRemoteCallback = _a.timeIntervalRemoteCallback, absoluteTimeEllapsedCallbacks = _a.absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs = _a.checkCallbacksIntervalMs, browserTabInactiveCallbacks = _a.browserTabInactiveCallbacks, browserTabActiveCallbacks = _a.browserTabActiveCallbacks, times = _a.times, timesIdle = _a.timesIdle, localKey = _a.localKey, idleTimeoutMs = _a.idleTimeoutMs, sourceUrl = _a.sourceUrl, targetUrl = _a.targetUrl, service = _a.service;
             this.initTimers = function () { return __awaiter(_this, void 0, void 0, function () {
-                var activeTime, idleTime, responseActiveTime, responseIdleTime, extraData;
+                var activeTime, idleTime, responseActiveTime, responseIdleTime;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -93,12 +93,8 @@
                             idleTime = BrowserInteractionTime.getIdleTime(this.localKey);
                             responseActiveTime = 0;
                             responseIdleTime = 0;
-                            if (!!this.serviceData) return [3 /*break*/, 1];
-                            console.error('You cannot use function remoteCallBack() without declare service at BrowserInteractionTime constructor\'s');
-                            return [3 /*break*/, 3];
-                        case 1:
-                            extraData = typeof this.serviceData.customUrl === 'string' ? { customUrl: this.serviceData.customUrl } : {};
-                            return [4 /*yield*/, this.remoteCallback(__assign({ method: 'GET' }, extraData))
+                            if (!this.serviceData) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this.remoteCallback({ method: 'GET' })
                                     .then(function (res) {
                                     var responseData = res.data;
                                     if (responseData) {
@@ -116,17 +112,18 @@
                                         _this.storageTimesObject(_this.localKey, _this.timesIdle, false);
                                     }
                                 })];
-                        case 2:
+                        case 1:
                             _a.sent();
-                            _a.label = 3;
-                        case 3: return [2 /*return*/];
+                            _a.label = 2;
+                        case 2: return [2 /*return*/];
                     }
                 });
             }); };
             this.generateGuid = function () {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     /*eslint-disable*/
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    var r = Math.random() * 16 | 0;
+                    var v = c === 'x' ? r : (r & 0x3 | 0x8);
                     /*eslint-enable*/
                     return v.toString(16);
                 });
@@ -177,7 +174,7 @@
                     _this.timesIdle = BrowserInteractionTime.getIdleTimesObject(_this.localKey, function (timeIdle) { return JSON.parse(timeIdle); });
                 }
                 // check all callbacks time and if passed execute callback
-                if (_this.getCurrentGuid() == _this.guid) {
+                if (_this.getCurrentGuid() === _this.guid) {
                     _this.absoluteTimeEllapsedCallbacks.forEach(function (_a, index) {
                         var callback = _a.callback, pending = _a.pending, timeInMilliseconds = _a.timeInMilliseconds;
                         if (pending && timeInMilliseconds <= _this.getTimeInMillisecondsOf(BrowserInteractionTime.getActiveTimesObject(_this.localKey))) {
@@ -210,7 +207,7 @@
                                 _this.timeIntervalRemoteCallback[index].timeout = Infinity; // Set timeout to Infinity to stop fetchService
                             }
                             else {
-                                _this.remoteCallback(callbackData);
+                                _this.remoteCallback(callbackData).then().catch();
                                 _this.timeIntervalRemoteCallback[index].timeInMilliseconds = 0;
                             }
                         }
@@ -229,6 +226,8 @@
             };
             this.remoteCallback = function (data) {
                 return new Promise(function (resolve, reject) {
+                    var extraData = typeof _this.serviceData.customUrl === 'string' ? { customUrl: _this.serviceData.customUrl } : {};
+                    data = __assign({}, data, extraData);
                     var hasCustomUrl = data.hasOwnProperty('customUrl') && ['undefined', 'boolean'].indexOf(typeof data.customUrl) === -1;
                     var method = data.hasOwnProperty('method') ? data.method : 'GET';
                     var timesObject = {
@@ -243,7 +242,7 @@
                         var request = {
                             method: method
                         };
-                        var url = hasCustomUrl ? data.customUrl : (method == 'GET' && _this.sourceUrl ? _this.sourceUrl : _this.targetUrl);
+                        var url = hasCustomUrl ? data.customUrl : (method === 'GET' && _this.sourceUrl ? _this.sourceUrl : _this.targetUrl);
                         if (method === 'GET') {
                             var params_1 = url.indexOf('?') !== -1 ? '&' : '?';
                             Object.keys(dataToSend).forEach(function (dataKey) {
@@ -255,7 +254,7 @@
                             request.body = JSON.stringify(dataToSend);
                         }
                         fetch(url, request)
-                            .then(function (res) { return resolve(res.json()); });
+                            .then(function (res) { return resolve(res.json()); }).catch();
                     }
                     else {
                         resolve(false);
@@ -276,7 +275,9 @@
                 window.addEventListener('focusout', _this.onBrowserTabInactive, windowListenerOptions);
                 window.addEventListener('focus', _this.onBrowserTabActive, windowListenerOptions);
                 window.addEventListener('beforeunload', function (e) {
-                    e.preventDefault();
+                    if (_this.serviceData) {
+                        _this.remoteCallback({ method: 'POST' }).then().catch();
+                    }
                 }, windowListenerOptions);
                 var throttleResetIdleTime = function () { return setTimeout(_this.resetIdleTime, 100); };
                 windowIdleEvents.forEach(function (event) {
@@ -305,7 +306,7 @@
                 return localStorage.getItem(_this.guidKey);
             };
             this.startTimer = function () {
-                if (!_this.isRunning() && _this.guid == _this.getCurrentGuid()) {
+                if (!_this.isRunning() && _this.guid === _this.getCurrentGuid()) {
                     _this.running = true;
                 }
                 if (!_this.checkCallbackIntervalId) {
@@ -497,7 +498,7 @@
             return this.measures[name];
         };
         BrowserInteractionTime.initTimer = function (time) {
-            return time == null ? [] : [{
+            return (time === null) ? [] : [{
                     start: performance.now(),
                     stop: (parseFloat(time))
                 }];
