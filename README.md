@@ -15,6 +15,13 @@
 
 BrowserInteractionTime lets you track the time a user is active on your webpage while ignoring time spent on a different tab or with a minimized window. It also ignores the time spent while the user is idle on a web page meaning after a certain amount of time (idleTimeoutMs) without any user interactions (scroll, mousemovement etc) the time will stop until the next user interaction.
 
+**September 2019:** *LocalStorage and remote sources support added by* ***Manu Rodríguez [@rayxgdev](https://github.com/rayxgdev/)***
+
+### Future changes by [@rayxgdev](https://github.com/rayxgdev/):
+
+* Update this README with explanation of localStorage and remote sources :x:
+* Tests support for localStorage :x:
+
 ## Importing BrowserInteractionTime
 
 You can import the generated bundle to use the whole library like this:
