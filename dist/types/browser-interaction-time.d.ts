@@ -2,27 +2,8 @@ interface BaseTimeEllapsedCallbackData {
     callback: (timeInMs: number, active: boolean) => void;
     timeInMilliseconds: number;
 }
-interface RemoteServiceData {
-    data: {
-        service?: string;
-        id?: number;
-    };
-    response: {
-        active: string;
-        idle: string;
-    };
-    customUrl?: string;
-}
-interface RemoteTimeCallbackData {
-    callbackData?: {};
-    timeInMilliseconds: number;
-    timeout: number;
-}
 declare type BasicCallback = (timeInMs: number, active: boolean) => void;
 export interface TimeIntervalEllapsedCallbackData extends BaseTimeEllapsedCallbackData {
-    multiplier: (time: number) => number;
-}
-export interface TimeIntervalRemoteCallback extends RemoteTimeCallbackData {
     multiplier: (time: number) => number;
 }
 export interface AbsoluteTimeEllapsedCallbackData extends BaseTimeEllapsedCallbackData {
@@ -30,7 +11,6 @@ export interface AbsoluteTimeEllapsedCallbackData extends BaseTimeEllapsedCallba
 }
 interface Settings {
     timeIntervalEllapsedCallbacks?: TimeIntervalEllapsedCallbackData[];
-    timeIntervalRemoteCallback?: TimeIntervalRemoteCallback[];
     absoluteTimeEllapsedCallbacks?: AbsoluteTimeEllapsedCallbackData[];
     browserTabInactiveCallbacks?: BasicCallback[];
     browserTabActiveCallbacks?: BasicCallback[];
@@ -41,7 +21,6 @@ interface Settings {
     localKey?: string;
     sourceUrl?: string;
     targetUrl?: string;
-    service?: RemoteServiceData;
 }
 interface Mark {
     time: number;
@@ -59,12 +38,10 @@ export default class BrowserInteractionTime {
     private checkCallbackIntervalId?;
     private currentIdleTimeMs;
     private idleTimeoutMs;
-    private remoteTimeout;
     private checkCallbacksIntervalMs;
     private browserTabActiveCallbacks;
     private browserTabInactiveCallbacks;
     private timeIntervalEllapsedCallbacks;
-    private timeIntervalRemoteCallback;
     private absoluteTimeEllapsedCallbacks;
     private marks;
     private measures;
@@ -73,14 +50,11 @@ export default class BrowserInteractionTime {
     private guid;
     private sourceUrl;
     private targetUrl;
-    private serviceData;
-    constructor({ timeIntervalEllapsedCallbacks, timeIntervalRemoteCallback, absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs, browserTabInactiveCallbacks, browserTabActiveCallbacks, times, timesIdle, localKey, idleTimeoutMs, sourceUrl, targetUrl, service, }: Settings);
-    private initTimers;
+    constructor({ timeIntervalEllapsedCallbacks, absoluteTimeEllapsedCallbacks, checkCallbacksIntervalMs, browserTabInactiveCallbacks, browserTabActiveCallbacks, times, timesIdle, localKey, idleTimeoutMs, sourceUrl, targetUrl }: Settings);
     private generateGuid;
     private onBrowserTabInactive;
     private onBrowserTabActive;
     private onTimePassed;
-    private remoteCallback;
     private resetIdleTime;
     private registerEventListeners;
     private unregisterEventListeners;
