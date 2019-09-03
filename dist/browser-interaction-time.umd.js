@@ -533,6 +533,7 @@
         };
         return BrowserInteractionTime;
     }());
+    //# sourceMappingURL=browser-interaction-time.js.map
 
     return BrowserInteractionTime;
 
